@@ -33,6 +33,7 @@ class Agent():
         self.action_size = action_size
         self.seed = random.seed(seed)
 
+
         # Q-Network
         self.qnetwork_local = QNetwork(self.state_goal_size, action_size, seed).to(device)
         self.qnetwork_target = QNetwork(self.state_goal_size, action_size, seed).to(device)
@@ -50,6 +51,7 @@ class Agent():
         # Learn every UPDATE_EVERY time steps.
         self.t_step = (self.t_step + 1) % UPDATE_EVERY
         if self.t_step == 0:
+            #if done:  # update after each episode
             # If enough samples are available in memory, get random subset and learn
             if len(self.memory) > BATCH_SIZE:
                 experiences = self.memory.sample()
