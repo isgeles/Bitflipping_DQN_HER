@@ -13,7 +13,9 @@ BATCH_SIZE = 64         # minibatch size
 GAMMA = 0.98            # discount factor
 TAU = 1e-3              # for soft update of target parameters
 LR = 1e-3               # learning rate 
-UPDATE_EVERY = 16        # how often to update the network
+UPDATE_EVERY = 1       # how often to update the network
+OPTIM_STEPS = 40        # number of optimization steps
+
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
@@ -51,11 +53,12 @@ class Agent():
         # Learn every UPDATE_EVERY time steps.
         self.t_step = (self.t_step + 1) % UPDATE_EVERY
         if self.t_step == 0:
-            #if done:  # update after each episode
-            # If enough samples are available in memory, get random subset and learn
-            if len(self.memory) > BATCH_SIZE:
-                experiences = self.memory.sample()
-                self.learn(experiences, GAMMA)
+            if done:  # update after each episode
+                # If enough samples are available in memory, get random subset and learn
+                if len(self.memory) > BATCH_SIZE:
+                    for i in range(OPTIM_STEPS):  # TODO: 40 optim steps
+                        experiences = self.memory.sample()
+                        self.learn(experiences, GAMMA)
 
     def act(self, state_goal, eps=0.):
         """Returns actions for given state as per current policy.
