@@ -131,7 +131,7 @@ def main():
 
     # saving trained network and results
     torch.save(agent.qnetwork_local.state_dict(), './trained/checkpoint_' + str(DEFAULT_PARAMS['n_bits']) + 'bits.pth')
-    np.savetxt('./trained/success_'+str(DEFAULT_PARAMS['n_bits'])+'.csv', success, delimiter=',')
+    # np.savetxt('./trained/success_'+str(DEFAULT_PARAMS['n_bits'])+'.csv', success, delimiter=',')
 
     # Plot rolling average of success
     N = 300
@@ -144,12 +144,11 @@ def main():
     plt.xlabel('Episode #')
     plt.show()
 
-
     # load the weights from file
     #agent.qnetwork_local.load_state_dict(torch.load('./trained/checkpoint_30bits.pth'))
 
-    print("Testing agent for 100 episodes, success-rate: ", test_bitflipping(DEFAULT_PARAMS['n_bits'], n_episodes=100,
-                                                                        policy=agent)*100, "%")
+    print("Testing agent for 100 episodes, success-rate: ",
+          test_bitflipping(DEFAULT_PARAMS['n_bits'], n_episodes=100, policy=agent)*100, "%")
 
 
 

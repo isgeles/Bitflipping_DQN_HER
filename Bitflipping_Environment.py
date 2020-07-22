@@ -23,7 +23,7 @@ class BitFlippingEnv():
         self.reset()
 
     def reset(self):
-        # reset environment
+        """Reset environment."""
         self.obs = np.random.randint(2, size=self.n)    # random initial obs
         self.goal = np.random.randint(2, size=self.n)   # random goal
         self.reward = 0.                                # reward, only 0 if success
@@ -38,6 +38,7 @@ class BitFlippingEnv():
         return self.state, self.reward, self.done, self.info
 
     def step(self, action):
+        """Perform action and update state."""
         # flipping the bit at position 'action'
         self.obs[action] = 1 - self.obs[action]
         self.timestep += 1
@@ -60,6 +61,7 @@ class BitFlippingEnv():
         return self.nextstate, self.reward, self.done, self.info
 
     def render(self, obs=None):
+        """ Render state (obs and goal)."""
         if obs is None:
             obs = self.obs
         print("Step {:2}    Bits: {}   Goal: {}   Success: {}".format(self.timestep, obs, self.goal, self.info))

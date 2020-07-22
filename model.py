@@ -17,7 +17,7 @@ class QNetwork(nn.Module):
 
     def forward(self, state):
         """
-        network that maps state to action values.
+        Network that maps state to action values.
 
         @param state: current state (2n bits)
         @return: value for all n bits we can flip
