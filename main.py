@@ -9,13 +9,13 @@ from Bitflipping_Environment import BitFlippingEnv
 from dqn_agent import Agent
 
 DEFAULT_PARAMS = {
-    'n_bits': 50,                 # n bits to flip in environment (n corresponding target bits)
+    'n_bits': 40,                 # n bits to flip in environment (n corresponding target bits)
     'seed': 0,                    # random seed for environment, torch, numpy, random packages
 
     'eps': 0.2,                   # probability of random action, 'epsilon-greedy' policy
     'buffer_size': int(1e6),      # replay-buffer size
     'batch_size': 64,             # mini-batch size
-    'gamma': 0.95,                # discount factor
+    'gamma': 0.98,                # discount factor
     'tau': 0.05,                  # soft update of target network, 1-tau = polyak coefficient
     'lr': 0.001,                  # learning rate
 
@@ -78,45 +78,42 @@ def train(n, agent):
             for i_episode in range(DEFAULT_PARAMS['n_episodes']):
                 state, _, _, _ = env.reset()
                 state_ep, act_ep, reward_ep, next_state_ep, done_ep = [], [], [], [], []
-                for t in range(DEFAULT_PARAMS['n_bits']):
+                for t in range(1000):
                     state_goal = np.concatenate([state['obs'], state['goal']])
                     action = agent.act(state_goal, eps)
                     next_state, reward, done, info = env.step(action)
 
+                    # save current transition of episode
                     state_ep.append(state.copy())
                     act_ep.append(action)
                     reward_ep.append(reward)
                     next_state_ep.append(next_state.copy())
                     done_ep.append(done)
 
-                    success.append(int(info))
+                    state = next_state
                     if done:
                         break
-                    state = next_state
+                success.append(int(info))
+                # for standard experience replay
                 agent.store_episode(state_ep, act_ep, reward_ep, next_state_ep, done_ep)
-
-                # HER additional goals
+                # HER: save additional goals
                 agent.store_episode_HER(state_ep, act_ep, reward_ep, next_state_ep, done_ep,
                                         replay_strategy=DEFAULT_PARAMS['replay_strategy'])
-
+            # optimize and soft update of networks
             for _ in range(DEFAULT_PARAMS['n_optim']):
                 agent.learn()
-        agent.soft_update(agent.qnetwork_local, agent.qnetwork_target, agent.tau)
+            agent.soft_update(agent.qnetwork_local, agent.qnetwork_target, agent.tau)
 
-        # stop training
-        if np.mean(success[-10:]) > 0.999:
+        # stop training earlier
+        if np.mean(success[-50:]) > 0.90:
             print("\n learning done")
             break
 
         if i_epoch % (DEFAULT_PARAMS['n_cycles'] / 10) == 0:
             print('\rEpoch {} \t Success: {:.4f}'.format(i_epoch, np.mean(success[-10:])))
-
         timer.update(i_epoch)
     timer.finish()
     return success
-
-
-
 
 def main():
 
@@ -140,7 +137,7 @@ def main():
     fig = plt.figure()
     ax = fig.add_subplot(111)
     plt.plot(np.arange(len(rolling_avg)), rolling_avg)
-    plt.ylabel('Score')
+    plt.ylabel('Success-rate')
     plt.xlabel('Episode #')
     plt.show()
 

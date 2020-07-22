@@ -46,12 +46,12 @@ class Agent:
         # normal experience replay, store experiences
         state_goals = [np.concatenate([i['obs'], i['goal']]) for i in states]
         next_state_goals = [np.concatenate([i['obs'], i['goal']]) for i in next_states]
-        for t, (sg, a, r, nsg, d) in enumerate(zip(state_goals, actions, rewards, next_state_goals, dones)):
+        for (sg, a, r, nsg, d) in zip(state_goals, actions, rewards, next_state_goals, dones):
             self.memory.add(sg, a, r, nsg, d)
     
 
-    def store_episode_HER(self, states, actions, rewards, next_states, dones, replay_strategy='none', k=4):
-        """Store episode (with HER samples if set to 'future').
+    def store_episode_HER(self, states, actions, rewards, next_states, dones, replay_strategy='final', k=4):
+        """Store episode with HER samples if replay_strategy is set to 'final', 'future' or 'episode'.
 
         @param states: (list of dicts) containing 'obs' and 'goal' (is stored as s||g in memory)
         @param actions: list of actions
@@ -64,28 +64,47 @@ class Agent:
         T = len(actions)
         n_bits = len(states[0]['obs'])
 
-        for t in range(T):
-            if replay_strategy is 'future':
-                # HER 'future' replay strategy ---------------------------------------------------------
+        if replay_strategy is 'final':
+            # HER 'final' replay strategy ---------------------------------------------------------
+            # substitute goal as final state of episode
+            goal_her = next_states[-1]['obs']
+
+            for t in range(T):
+                state_goal = np.concatenate((states[t]['obs'], goal_her))
+                next_state_goal = np.concatenate((next_states[t]['obs'], goal_her))
+                # recompute reward and done
+                done = np.sum(np.array(next_states[t]['obs']) == np.array(goal_her)) == n_bits
+                reward = 0 if done else -1
+                self.memory.add(state_goal, actions[t], reward, next_state_goal, done)
+
+        if replay_strategy is 'future':
+            # HER 'future' replay strategy ---------------------------------------------------------
+            for t in range(T):
                 for k in range(k):
-                    future = np.random.randint(t, T)
-                    goal_her = next_states[future]['obs']
+                    future_idx = np.random.randint(t, T)  # select random index from future experience in episode
+                    # set goal as next_state from future index
+                    goal_her = next_states[future_idx]['obs']
                     state_goal = np.concatenate([states[t]['obs'], goal_her])
                     next_state_goal = np.concatenate([next_states[t]['obs'], goal_her])
-                    done = np.sum(np.array(states[t]['obs']) == np.array(goal_her)) == n_bits  # done/info true if successful
-
-                    reward = 0. if done else -1.
+                    # recompute reward and done
+                    done = np.sum(np.array(next_states[t]['obs']) == np.array(goal_her)) == n_bits
+                    reward = 0 if done else -1
                     self.memory.add(state_goal, actions[t], reward, next_state_goal, done)
-                    
-            if replay_strategy is 'final':
-                # HER 'final' replay strategy ---------------------------------------------------------
-                goal_her = states[-1]['obs']
-                state_goal = np.concatenate([states[t]['obs'], goal_her])
-                next_state_goal = np.concatenate([next_states[t]['obs'], goal_her])
-                done = np.sum(np.array(states[t]['obs']) == np.array(goal_her)) == n_bits  # done/info true if successful
 
-                reward = 0. if done else -1.
-                self.memory.add(state_goal, actions[t], reward, next_state_goal, done)
+        if replay_strategy is 'episode':
+            # HER 'episode' replay strategy ---------------------------------------------------------
+            for t in range(T):
+                for k in range(k):
+                    episode_idx = np.random.randint(0, T)       # select random index from current episode
+                    # set goal as random (next) state in episode
+                    goal_her = next_states[episode_idx]['obs']
+                    state_goal = np.concatenate([states[t]['obs'], goal_her])
+                    next_state_goal = np.concatenate([next_states[t]['obs'], goal_her])
+                    # recompute reward and done
+                    done = np.sum(np.array(next_states[t]['obs']) == np.array(goal_her)) == n_bits
+                    reward = 0 if done else -1
+                    self.memory.add(state_goal, actions[t], reward, next_state_goal, done)
+
     
 
     def act(self, state_goal, eps=0.):

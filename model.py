@@ -1,6 +1,13 @@
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+
+def hidden_init(layer):
+    fan_in = layer.weight.data.size()[0]
+    lim = 1. / np.sqrt(fan_in)
+    return -lim, lim
+
 
 class QNetwork(nn.Module):
     def __init__(self, state_size, action_size):
@@ -14,6 +21,7 @@ class QNetwork(nn.Module):
         # fully connected layers, 1 hidden with 256 neurons
         self.fc1 = nn.Linear(state_size, 256)
         self.fc2 = nn.Linear(256, action_size)
+        self.reset_parameters()
 
     def forward(self, state):
         """
@@ -26,3 +34,6 @@ class QNetwork(nn.Module):
         action = self.fc2(state)
         return action
 
+    def reset_parameters(self):
+        self.fc1.weight.data.uniform_(*hidden_init(self.fc1))
+        self.fc2.weight.data.uniform_(-3e-3, 3e-3)
