@@ -14,7 +14,7 @@ Given a sequence of n bits and n target bits, the agent has to flip a bit with e
 The episode length is equal to the number of bits, i.e. if all n bits must be flipped for reaching the target, the agent should not make any mistakes to be successful (receive reward at the end of the episode).
 
 A sample unsuccessful episode (for n = 5) could look like this, where with every timestep the agent received a negativ reward of -1:
-`
+```
 Step  0    Bits: [1 1 0 0 0]   Goal: [0 1 1 0 0]   Success: False
 Step  1    Bits: [1 0 0 0 0]   Goal: [0 1 1 0 0]   Success: False
 Step  2    Bits: [1 0 0 1 0]   Goal: [0 1 1 0 0]   Success: False
