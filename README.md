@@ -22,7 +22,7 @@ Step  3    Bits: [1 0 1 1 0]   Goal: [0 1 1 0 0]   Success: False
 Step  4    Bits: [1 0 0 1 0]   Goal: [0 1 1 0 0]   Success: False
 Step  5    Bits: [0 0 0 1 0]   Goal: [0 1 1 0 0]   Success: False
 ######## DONE in 5 timesteps, success: False ########
-`
+```
 
 
 ### Rewards
