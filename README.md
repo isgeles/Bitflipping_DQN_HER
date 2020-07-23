@@ -46,12 +46,13 @@ Therefore I implemented Hindsight Experience Replay (HER) as described in the pa
 ### Files in this Repository
                     
     .
-    ├── trained                            # stored weights for trained Q-networks 
+    ├── trained/                           # stored weights for trained Q-networks 
+    ├── Bitflipping_Environment.py         # implementation of environment in openai gym format
     ├── dqn_agent.py                       # agent to interact and learn from environment
-    ├── model.py                           # neural network model (in Pytorch)
     ├── main_ipython.ipynb                 # main code for training and testing the agent in ipython (jupyter) notebook
     ├── main.py                            # main code for training and testing the agent in .py format
-    ├── Bitflipping_Environment.py         # implementation of environment in openai gym format
+    ├── model.py                           # neural network model (in Pytorch)
+    ├── replayBuffer.py                    # buffer for experience replay
     └── README.md
 
 
