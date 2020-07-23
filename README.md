@@ -40,7 +40,7 @@ The action space is defined by the index of the bit to be flipped, i.e. 0 until 
 ### Learning Algorithm
 
 Deep Q-Networks with standard experience replay fail to learn from this environment for n > 13 bits, since the state-space becomes to large to explore.
-Therefore I implemented Hindsight Experience Replay (HER) as described in the paper [Hindsight Experience Replay](https://arxiv.org/abs/1707.01495) to solve the task for 45-50 bits.
+Therefore I implemented Hindsight Experience Replay (HER) as described in the paper [Hindsight Experience Replay](https://arxiv.org/abs/1707.01495) to solve the task up to 45 bits.
 
 
 ### Files in this Repository
