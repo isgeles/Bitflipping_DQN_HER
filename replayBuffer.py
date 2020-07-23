@@ -6,9 +6,8 @@ from collections import namedtuple, deque
 class ReplayBuffer:
     """
     Fixed-size buffer to store experience tuples.
-    Experience tuple:  (s||g, a, r, s'||g, done).
+    Experience tuple:  (s||g, a, r, ns||g, done).
     """
-
     def __init__(self, action_size, buffer_size, batch_size):
         """Initialize a ReplayBuffer
 
@@ -25,12 +24,19 @@ class ReplayBuffer:
                                      field_names=["state_goal", "action", "reward", "next_state_goal", "done"])
 
     def add(self, state_goal, action, reward, next_state_goal, done):
-        """Add a new experience to memory"""
+        """ Add a new experience to memory.
+
+        @param state_goal: state concatenated with goal (s||g)
+        @param action: action is the bit to flip
+        @param reward: signal defined in environment
+        @param next_state_goal: next state concatenated with goal (ns||g)
+        @param done: episode finished indicator
+        """
         e = self.experience(state_goal, action, reward, next_state_goal, done)
         self.memory.append(e)
 
     def sample(self):
-        """Randomly sample a batch of experiences from memory"""
+        """ Randomly sample a batch of experiences from memory."""
         experiences = random.sample(self.memory, k=self.batch_size)
 
         state_goals = torch.from_numpy(np.vstack([e.state_goal for e in experiences if e is not None])).float().to(
@@ -45,6 +51,6 @@ class ReplayBuffer:
         return (state_goals, actions, rewards, next_state_goals, dones)
 
     def __len__(self):
-        """Return the current size of internal memory"""
+        """ Return the current size of internal memory."""
         return len(self.memory)
 
