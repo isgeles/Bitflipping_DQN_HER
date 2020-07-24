@@ -1,8 +1,6 @@
-# Bitflipping Environment with Deep Q-Network and Hindsight Experience Replay
+# Bitflipping Experiment with Deep Q-Network and Hindsight Experience Replay
 
-Bitflipping environment with Deep Reinforcement Learning:
-
-Algorithms:
+Used Algorithms:
   - Deep Q-Network (DQN)
   - DQN with Hindsight Experience Replay (DQN+HER)
 
@@ -40,7 +38,7 @@ The action space is defined by the index of the bit to be flipped, i.e. 0 until 
 ### Learning Algorithm
 
 Deep Q-Networks with standard experience replay fail to learn from this environment for n > 13 bits, since the state-space becomes to large to explore.
-Therefore I implemented Hindsight Experience Replay (HER) as described in the paper [Hindsight Experience Replay](https://arxiv.org/abs/1707.01495) to solve the task up to 45 bits.
+Therefore I implemented Hindsight Experience Replay (HER) as described in the paper [Hindsight Experience Replay](https://arxiv.org/abs/1707.01495) to solve the task up to 40 bits (tested so far).
 
 
 ### Files in this Repository
