@@ -1,6 +1,6 @@
 # Bitflipping Experiment with Deep Q-Network and Hindsight Experience Replay
 
-Used Algorithms:
+Used Algorithms in Pytorch:
   - Deep Q-Network (DQN)
   - DQN with Hindsight Experience Replay (DQN+HER)
 
