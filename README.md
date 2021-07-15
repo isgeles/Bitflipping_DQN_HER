@@ -4,6 +4,7 @@ Used Algorithms in Pytorch:
   - Deep Q-Network (DQN)
   - DQN with Hindsight Experience Replay (DQN+HER)
 
+My Bachelor's Thesis about RL and Hindsight Experience Replay can be viewed [here](https://drive.google.com/file/d/1ayOb9t2dB-XccyOEDicSLH-0CBFeeaDr/view).  
 
 ### Environment
 
